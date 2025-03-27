@@ -1,0 +1,18 @@
+[ req ]
+default_bits           = 2048
+default_keyfile        = keyfile.pem
+distinguished_name     = req_distinguished_name
+attributes             = req_attributes
+prompt                 = no
+
+[ req_distinguished_name ]
+C                      = RU
+ST                     = Moscow
+L                      = Moscow City
+O                      = Organization
+OU                     = Organizational Unit
+CN                     = 127.0.0.1
+emailAddress           = clonerpresent@gmail.com
+
+[ req_attributes ]
+challengePassword              = A challenge password

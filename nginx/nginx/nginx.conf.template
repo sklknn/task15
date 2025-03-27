@@ -1,0 +1,77 @@
+user www-data;
+worker_processes auto;
+pid /run/nginx.pid;
+error_log /var/log/nginx/error.log;
+include /etc/nginx/modules-enabled/*.conf;
+load_module /etc/nginx/modules/ngx_http_image_filter_module.so;
+
+events {
+	worker_connections 1024;
+}
+
+
+http {
+  # this is the internal Docker DNS, cache only for 30s
+  resolver 127.0.0.11 valid=30s;
+
+  upstream redblue {
+	  zone redblue_zone 64k;
+    #server ${DOLLAR}hostname:8000 ;
+    server localhost:8000 ;
+    server localhost:8001 ;
+	}
+	
+	log_format redbluelog '${DOLLAR}server_name to: ${DOLLAR}upstream_addr [${DOLLAR}request] [${DOLLAR}uri] ';
+	access_log /etc/nginx/access.log redbluelog;
+
+	server {
+		listen ${PORT} ssl;
+    ssl_certificate /app/ssl/nginx-selfsigned.crt;
+    ssl_certificate_key  /app/ssl/nginx-selfsigned.key;
+		
+		root /app/nginx;
+
+		location /music/ {
+			add_header Content-disposition "attachment; filename=song.mp3";
+
+			try_files ${DOLLAR}uri /music/coolsong.mp3;
+		}
+
+		location /info.php/ {
+			proxy_pass ${APACHE_URL}/info.php;
+		}
+
+		location /apache/ {
+			return 301 ${APACHE_URL};
+		}
+
+		location /redblue/ {
+			proxy_pass http://redblue/;
+		}
+		
+		location ~ \/image1\/ {
+			rewrite ^\/image[12]\/((.*)\..*)${DOLLAR} /images/${DOLLAR}2.jpg last;
+			rewrite ^\/image[12]\/${DOLLAR} /images/cat.jpg last;
+		}
+
+		location ~ \/image2\/ {
+			rewrite ^\/image[12]\/((.*)\..*)${DOLLAR} /images/${DOLLAR}2.png last;
+			rewrite ^\/image[12]\/${DOLLAR} /images/cat.png last;
+		}
+
+		location ~ ^\/images\/.*\.?.*${DOLLAR} {
+     	
+      location ~ "\.jpe?g${DOLLAR}" {
+				default_type image/jpeg;
+        image_filter rotate 180;
+      }
+
+			location ~ "\.png${DOLLAR}" {
+				default_type image/png;
+      }
+
+		}
+
+	}
+}
+ 
