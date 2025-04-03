@@ -13,8 +13,8 @@ pipeline {
             steps {
                 sh '''
                     ls -la
-                    docker build -t sklknn/nginxssl ./nginx
-                    docker build -t sklknn/apache ./apache
+                    docker build -t sklknn/nginxssl:${env.BUILD_ID} ./nginx
+                    docker build -t sklknn/apache:${env.BUILD_ID} ./apache
                 '''
             }
         }
