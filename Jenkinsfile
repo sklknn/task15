@@ -15,6 +15,7 @@ pipeline {
                     ls -la
                     docker build -t sklknn/nginxssl:1.${BUILD_ID} -t sklknn/nginxssl:latest ./nginx
                     docker build -t sklknn/apache:1.${BUILD_ID} -t sklknn/nginxssl:latest ./apache
+                    echo "DONE"
                 '''
             }
         }
