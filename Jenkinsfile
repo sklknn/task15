@@ -7,7 +7,7 @@ pipeline {
     agent any
 
     environment {
-        SSH_CREDS=credentials('53d35ffb-9b9a-47c0-8486-c9fd63317b8a')
+        SSH_CREDS=credentials('ssh_priv_key')
     }
 
     stages {
@@ -44,8 +44,8 @@ pipeline {
         stage('Deploy test') {
             steps {
                 script {
-                    remoteTest.user=env.SSH_CREDS_USR
-                    remoteTest.identity=env.SSH_CREDS_PSW
+                    remoteTest.user=sklknn
+                    remoteTest.identityFile=SSH_CREDS
                 }
                 sshCommand(remote: remoteTest, command: "ls -lah && woami")
                 
