@@ -6,7 +6,7 @@ remoteTest.allowAnyHosts = true
 pipeline {
     agent any
 
-    enviroment {
+    environment {
         SSH_CREDS=credentials('53d35ffb-9b9a-47c0-8486-c9fd63317b8a')
     }
 
