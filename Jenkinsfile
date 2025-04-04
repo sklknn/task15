@@ -37,7 +37,7 @@ pipeline {
             }
         }
         
-        stage('Test') {
+        stage('Deploy dev') {
             steps {
                 echo 'Deploying to test env...'
                 withCredentials([file(credentialsId: 'ssh_priv_key', variable: 'secretFile')]) {
@@ -48,9 +48,9 @@ pipeline {
                     //run nginx container
                     catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
                         // delete running container 
-                        sshCommand(remote: remoteTest, command: 'sudo docker rm -f $(sudo docker ps -aqf "name=nginx")')
+                        sshCommand(remote: remoteTest, command: 'sudo docker rm -f nginx')
                         // delete old image                         
-                        sshCommand(remote: remoteTest, command: 'sudo docker rmi $(sudo docker images -af reference="cr.yandex/crp0n9cjqc11aftmre79/nginxssl" -q)')
+                        sshCommand(remote: remoteTest, command: 'sudo docker rmi -f $(sudo docker images -af reference="cr.yandex/crp0n9cjqc11aftmre79/nginxssl" -q)')
                     }
                     // pull and run
                     sshCommand(remote: remoteTest, command: 'docker pull cr.yandex/crp0n9cjqc11aftmre79/nginxssl:latest', sudo: true)
@@ -58,9 +58,9 @@ pipeline {
                     //run apache container
                     catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
                         // delete running container 
-                        sshCommand(remote: remoteTest, command: 'sudo docker rm -f $(sudo docker ps -aqf "name=apache")')
+                        sshCommand(remote: remoteTest, command: 'sudo docker rm -f apache')
                         // delete old image                         
-                        sshCommand(remote: remoteTest, command: 'sudo docker rmi $(sudo docker images -af reference="cr.yandex/crp0n9cjqc11aftmre79/apache" -q)')
+                        sshCommand(remote: remoteTest, command: 'sudo docker rmi -f $(sudo docker images -af reference="cr.yandex/crp0n9cjqc11aftmre79/apache" -q)')
                     }
                     // pull and run
                     sshCommand(remote: remoteTest, command: 'docker pull cr.yandex/crp0n9cjqc11aftmre79/apache:latest', sudo: true)
@@ -69,8 +69,8 @@ pipeline {
                 }
             }
         }
-
-        stage('Deploy') {
+/*    
+        stage('Deploy prod') {
             steps {
                 echo 'Deploying to production enviroment'
                 withCredentials([file(credentialsId: 'ssh_priv_key', variable: 'secretFile')]) {
@@ -83,7 +83,7 @@ pipeline {
                         // delete running container 
                         sshCommand(remote: remoteProd, command: 'sudo docker rm -f $(sudo docker ps -aqf "name=nginx")')
                         // delete old image                         
-                        sshCommand(remote: remoteProd, command: 'sudo docker rmi $(sudo docker images -af reference="cr.yandex/crp0n9cjqc11aftmre79/nginxssl" -q)')
+                        sshCommand(remote: remoteProd, command: 'sudo docker rmi -f $(sudo docker images -af reference="cr.yandex/crp0n9cjqc11aftmre79/nginxssl" -q)')
                     }
                     // pull and run
                     sshCommand(remote: remoteProd, command: 'docker pull cr.yandex/crp0n9cjqc11aftmre79/nginxssl:latest', sudo: true)
@@ -93,7 +93,7 @@ pipeline {
                         // delete running container 
                         sshCommand(remote: remoteProd, command: 'sudo docker rm -f $(sudo docker ps -aqf "name=apache")')
                         // delete old image                         
-                        sshCommand(remote: remoteProd, command: 'sudo docker rmi $(sudo docker images -af reference="cr.yandex/crp0n9cjqc11aftmre79/apache" -q)')
+                        sshCommand(remote: remoteProd, command: 'sudo docker rmi -f $(sudo docker images -af reference="cr.yandex/crp0n9cjqc11aftmre79/apache" -q)')
                     }
                     // pull and run
                     sshCommand(remote: remoteProd, command: 'docker pull cr.yandex/crp0n9cjqc11aftmre79/apache:latest', sudo: true)
@@ -101,6 +101,6 @@ pipeline {
                 }
             }
         }
+    */
     }
-
 }
