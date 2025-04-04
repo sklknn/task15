@@ -45,21 +45,12 @@ pipeline {
         stage('Deploy test') {
             steps {
                 withCredentials([file(credentialsId: 'ssh_priv_key', variable: 'secretFile')]) {
-                    // this works
+                    // this works!!! 
                     sh 'cat $secretFile'
                     script {
                         remoteTest.identityFile = env.secretFile
                     }
-                    sshCommand(remote: remoteTest, command: "ls -lah && woami")
-                        //env.remoteTest.identityFile = env.secretFile
-                }
-                //script {
-                //    remoteTest.user=sklknn
-                //    remoteTest.identityFile=env.SSH_CREDS
-                //}
-                
-                
-                
+                    sshCommand(remote: remoteTest, command: "ls -lah && whoami")
             }
         }
     }
