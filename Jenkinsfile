@@ -51,6 +51,7 @@ pipeline {
                         remoteTest.identityFile = env.secretFile
                     }
                     sshCommand(remote: remoteTest, command: "ls -lah && whoami")
+                }
             }
         }
     }
