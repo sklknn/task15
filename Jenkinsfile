@@ -6,7 +6,7 @@ remoteTest.user = 'sklknn'
 
 def remoteProd=[:]
 remoteProd.name = 'production'
-remoteProd.host = '192.168.0.1'
+remoteProd.host = '158.160.80.155'
 remoteProd.allowAnyHosts = true
 remoteProd.user = 'sklknn'
 
@@ -72,6 +72,32 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying to production enviroment'
+                withCredentials([file(credentialsId: 'ssh_priv_key', variable: 'secretFile')]) {
+                    script {
+                        remoteProd.identityFile = env.secretFile
+                    }
+
+                    //run nginx container
+                    catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+                        // delete running container 
+                        sshCommand(remote: remoteProd, command: 'sudo docker rm -f $(sudo docker ps -aqf "name=nginx")')
+                        // delete old image                         
+                        sshCommand(remote: remoteProd, command: 'sudo docker rmi $(sudo docker images -af reference="cr.yandex/crp0n9cjqc11aftmre79/nginxssl" -q)')
+                    }
+                    // pull and run
+                    sshCommand(remote: remoteProd, command: 'docker pull cr.yandex/crp0n9cjqc11aftmre79/nginxssl:latest', sudo: true)
+                    sshCommand(remote: remoteProd, command: 'docker run -d --name nginx -p 443:443 -e PORT=443 -e DOLLAR=$ -e APACHE_URL=http://'+ remoteProd.host +':8080 cr.yandex/crp0n9cjqc11aftmre79/nginxssl', sudo: true)
+                    //run apache container
+                    catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+                        // delete running container 
+                        sshCommand(remote: remoteProd, command: 'sudo docker rm -f $(sudo docker ps -aqf "name=apache")')
+                        // delete old image                         
+                        sshCommand(remote: remoteProd, command: 'sudo docker rmi $(sudo docker images -af reference="cr.yandex/crp0n9cjqc11aftmre79/apache" -q)')
+                    }
+                    // pull and run
+                    sshCommand(remote: remoteProd, command: 'docker pull cr.yandex/crp0n9cjqc11aftmre79/apache:latest', sudo: true)
+                    sshCommand(remote: remoteProd, command: 'docker run -d --name apache -p 8080:8080 -e PORT=8080 -e DOLLAR=$ cr.yandex/crp0n9cjqc11aftmre79/apache', sudo: true)
+
             }
             
         }
