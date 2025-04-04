@@ -51,11 +51,10 @@ pipeline {
                 
             }
         }
-
-        post {
-            always {
-                sleep 5
-            }
+    }
+    post {
+        always {
+            sleep 5
         }
     }
 }
