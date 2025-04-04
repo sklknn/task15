@@ -4,6 +4,12 @@ remoteTest.host = '158.160.66.170'
 remoteTest.allowAnyHosts = true
 remoteTest.user = 'sklknn'
 
+def remoteProd=[:]
+remoteProd.name = 'production'
+remoteProd.host = '192.168.0.1'
+remoteProd.allowAnyHosts = true
+remoteProd.user = 'sklknn'
+
 pipeline {
     agent any
 
@@ -42,15 +48,14 @@ pipeline {
             }
         }
         
-        stage('Deploy test') {
+        stage('Deploy in test') {
             steps {
                 withCredentials([file(credentialsId: 'ssh_priv_key', variable: 'secretFile')]) {
                     // this works!!! 
-                    sh 'cat $secretFile'
                     script {
                         remoteTest.identityFile = env.secretFile
                     }
-                    sshCommand(remote: remoteTest, command: "ls -lah && whoami")
+                    sshCommand(remote: remoteTest, command: "docker run hello-world", sudo: true)
                 }
             }
         }
