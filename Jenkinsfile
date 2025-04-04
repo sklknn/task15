@@ -36,7 +36,7 @@ pipeline {
                 '''
             }
         }
-        
+/*       
         stage('Deploy dev') {
             steps {
                 echo 'Deploying to test env...'
@@ -69,7 +69,7 @@ pipeline {
                 }
             }
         }
-/*    
+*/    
         stage('Deploy prod') {
             steps {
                 echo 'Deploying to production enviroment'
@@ -101,6 +101,6 @@ pipeline {
                 }
             }
         }
-    */
+    
     }
 }
