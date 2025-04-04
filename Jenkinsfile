@@ -55,7 +55,8 @@ pipeline {
                     script {
                         remoteTest.identityFile = env.secretFile
                     }
-                    sshCommand(remote: remoteTest, command: "docker run hello-world", sudo: true)
+                    sshCommand(remote: remoteTest, command: 'docker pull cr.yandex/crp0n9cjqc11aftmre79/nginxssl:latest', sudo: true)
+                    sshCommand(remote: remoteTest, command: 'docker run -d --name nginx -p 443:443 -e PORT=443 -e DOLLAR=$ -e APACHE_URL=http://localhost:8080 cr.yandex/crp0n9cjqc11aftmre79/nginxssl', sudo: true)
                 }
             }
         }
