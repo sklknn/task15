@@ -54,16 +54,24 @@ pipeline {
                     }
                     // pull and run
                     sshCommand(remote: remoteTest, command: 'docker pull cr.yandex/crp0n9cjqc11aftmre79/nginxssl:latest', sudo: true)
-                    sshCommand(remote: remoteTest, command: 'docker run -d --name nginx -p 443:443 -e PORT=443 -e DOLLAR=$ -e APACHE_URL=http://localhost:8080 cr.yandex/crp0n9cjqc11aftmre79/nginxssl', sudo: true)
+                    sshCommand(remote: remoteTest, command: 'docker run -d --name nginx -p 443:443 -e PORT=443 -e DOLLAR=$ -e APACHE_URL=http://'+ remoteTest.host +':8080 cr.yandex/crp0n9cjqc11aftmre79/nginxssl', sudo: true)
                     //run apache container
+                    catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+                        // delete running container 
+                        sshCommand(remote: remoteTest, command: 'sudo docker rm -f $(sudo docker ps -aqf "name=apache")')
+                        // delete old image                         
+                        sshCommand(remote: remoteTest, command: 'sudo docker rmi $(sudo docker images -af reference="cr.yandex/crp0n9cjqc11aftmre79/apache" -q)')
+                    }
+                    // pull and run
+                    sshCommand(remote: remoteTest, command: 'docker pull cr.yandex/crp0n9cjqc11aftmre79/apache:latest', sudo: true)
+                    sshCommand(remote: remoteTest, command: 'docker run -d --name apache -p 8080:8080 -e PORT=8080 -e DOLLAR=$ cr.yandex/crp0n9cjqc11aftmre79/apache', sudo: true)
 
                 }
             }
         }
-    }
-    post {
-        always {
-            sleep 5
+        stage('Deploy') {
+            echo 'Deploying to production enviroment'
         }
     }
+
 }
