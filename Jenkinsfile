@@ -70,7 +70,10 @@ pipeline {
             }
         }
         stage('Deploy') {
-            echo 'Deploying to production enviroment'
+            steps {
+                echo 'Deploying to production enviroment'
+            }
+            
         }
     }
 
