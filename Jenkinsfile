@@ -45,8 +45,9 @@ pipeline {
             steps {
                 script {
                     remoteTest.user=sklknn
-                    remoteTest.identityFile=SSH_CREDS
+                    remoteTest.identityFile=env.SSH_CREDS
                 }
+                
                 sshCommand(remote: remoteTest, command: "ls -lah && woami")
                 
             }
