@@ -48,14 +48,14 @@ pipeline {
                         // do something with the file, for instance 
                         sh 'cat $secretFile'
                         
-                        remoteTest.identityFile = env.secretFile
+                        //remoteTest.identityFile = env.secretFile
                 }
                 //script {
                 //    remoteTest.user=sklknn
                 //    remoteTest.identityFile=env.SSH_CREDS
                 //}
                 
-                sshCommand(remote: remoteTest, command: "ls -lah && woami")
+                //sshCommand(remote: remoteTest, command: "ls -lah && woami")
                 
             }
         }
