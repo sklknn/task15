@@ -69,6 +69,7 @@ pipeline {
                 }
             }
         }
+
         stage('Deploy') {
             steps {
                 echo 'Deploying to production enviroment'
@@ -97,9 +98,8 @@ pipeline {
                     // pull and run
                     sshCommand(remote: remoteProd, command: 'docker pull cr.yandex/crp0n9cjqc11aftmre79/apache:latest', sudo: true)
                     sshCommand(remote: remoteProd, command: 'docker run -d --name apache -p 8080:8080 -e PORT=8080 -e DOLLAR=$ cr.yandex/crp0n9cjqc11aftmre79/apache', sudo: true)
-
+                }
             }
-            
         }
     }
 
