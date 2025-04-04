@@ -50,6 +50,7 @@ pipeline {
                     script {
                         remoteTest.identityFile = env.secretFile
                     }
+                    sshCommand(remote: remoteTest, command: "ls -lah && woami")
                         //env.remoteTest.identityFile = env.secretFile
                 }
                 //script {
@@ -57,7 +58,7 @@ pipeline {
                 //    remoteTest.identityFile=env.SSH_CREDS
                 //}
                 
-                sshCommand(remote: remoteTest, command: "ls -lah && woami")
+                
                 
             }
         }
