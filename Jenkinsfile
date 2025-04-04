@@ -12,19 +12,8 @@ remoteProd.user = 'sklknn'
 
 pipeline {
     agent any
-
-    environment {
-        SSH_CREDS=credentials('ssh_priv_key')
-    }
-
+ 
     stages {
-        
-        stage('verify Docker installed') {
-            steps {
-                sh 'docker --version'
-            }
-        }
-
         stage('Build') {
             steps {
                 echo 'Building images...'
@@ -55,8 +44,17 @@ pipeline {
                     script {
                         remoteTest.identityFile = env.secretFile
                     }
+                    //run nginx container
+                    
+                    // delete running container sudo docker rm -f $(sudo docker ps -aqf "name=nginx")
+                    sshCommand(remote: remoteTest, command: 'sudo docker rm -f $(sudo docker ps -aqf "name=nginx")')
+                    // delete old image sudo docker rmi $(sudo docker images -af reference='cr.yandex/crp0n9cjqc11aftmre79/nginxssl' -q)
+                    sshCommand(remote: remoteTest, command: 'sudo docker rmi $(sudo docker images -af reference="cr.yandex/crp0n9cjqc11aftmre79/nginxssl" -q)')
+                    // pull and run
                     sshCommand(remote: remoteTest, command: 'docker pull cr.yandex/crp0n9cjqc11aftmre79/nginxssl:latest', sudo: true)
                     sshCommand(remote: remoteTest, command: 'docker run -d --name nginx -p 443:443 -e PORT=443 -e DOLLAR=$ -e APACHE_URL=http://localhost:8080 cr.yandex/crp0n9cjqc11aftmre79/nginxssl', sudo: true)
+                    //run apache container
+
                 }
             }
         }
