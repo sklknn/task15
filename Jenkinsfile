@@ -37,9 +37,9 @@ pipeline {
             }
         }
         
-        stage('Deploy in test') {
+        stage('Test') {
             steps {
-                echo 'Deploying to test...'
+                echo 'Deploying to test env...'
                 withCredentials([file(credentialsId: 'ssh_priv_key', variable: 'secretFile')]) {
                     // this works!!! 
                     script {
