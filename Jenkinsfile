@@ -2,6 +2,7 @@ def remoteTest=[:]
 remoteTest.name = 'test'
 remoteTest.host = '158.160.66.170'
 remoteTest.allowAnyHosts = true
+remoteTest.user = 'sklknn'
 
 pipeline {
     agent any
@@ -46,8 +47,8 @@ pipeline {
                 withCredentials([file(credentialsId: 'ssh_priv_key', variable: 'secretFile')]) {
                         // do something with the file, for instance 
                         sh 'cat $secretFile'
-                        remoteTest.user='sklknn'
-                        remoteTest.identityFile=$secretFile
+                        
+                        remoteTest.identityFile = env.secretFile
                 }
                 //script {
                 //    remoteTest.user=sklknn
