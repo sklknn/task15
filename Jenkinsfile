@@ -54,7 +54,7 @@ pipeline {
                     }
                     // pull and run
                     sshCommand(remote: remoteTest, command: 'docker pull cr.yandex/crpagqn6vd2vbjstpe7f/nginxssl:dev', sudo: true)
-                    sshCommand(remote: remoteTest, command: 'docker run -d --name nginx -p 443:443 -e PORT=443 -e DOLLAR=$ -e APACHE_URL=http://'+ remoteTest.host +':8080 cr.yandex/crpagqn6vd2vbjstpe7f/nginxssl', sudo: true)
+                    sshCommand(remote: remoteTest, command: 'docker run -d --name nginx -p 443:443 -e PORT=443 -e DOLLAR=$ -e APACHE_URL=http://'+ remoteTest.host +':8080 cr.yandex/crpagqn6vd2vbjstpe7f/nginxssl:dev', sudo: true)
                     //run apache container
                     catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
                         // delete running container 
@@ -64,7 +64,7 @@ pipeline {
                     }
                     // pull and run
                     sshCommand(remote: remoteTest, command: 'docker pull cr.yandex/crpagqn6vd2vbjstpe7f/apache:dev', sudo: true)
-                    sshCommand(remote: remoteTest, command: 'docker run -d --name apache -p 8080:8080 -e PORT=8080 -e DOLLAR=$ cr.yandex/crpagqn6vd2vbjstpe7f/apache', sudo: true)
+                    sshCommand(remote: remoteTest, command: 'docker run -d --name apache -p 8080:8080 -e PORT=8080 -e DOLLAR=$ cr.yandex/crpagqn6vd2vbjstpe7f/apache:dev', sudo: true)
 
                 }
             }
