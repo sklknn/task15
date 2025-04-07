@@ -18,8 +18,8 @@ pipeline {
             steps {
                 echo 'Building images...'
                 sh '''
-                    docker build -t cr.yandex/crpagqn6vd2vbjstpe7f/nginxssl:1.${BUILD_ID} -t cr.yandex/crpagqn6vd2vbjstpe7f/nginxssl:latest ./nginx
-                    docker build -t cr.yandex/crpagqn6vd2vbjstpe7f/apache:1.${BUILD_ID} -t cr.yandex/crpagqn6vd2vbjstpe7f/apache:latest ./apache
+                    docker build -t cr.yandex/crpagqn6vd2vbjstpe7f/nginxssl:1.${BUILD_ID}.dev -t cr.yandex/crpagqn6vd2vbjstpe7f/nginxssl:dev ./nginx
+                    docker build -t cr.yandex/crpagqn6vd2vbjstpe7f/apache:1.${BUILD_ID}.dev -t cr.yandex/crpagqn6vd2vbjstpe7f/apache:dev ./apache
                 '''
             }
         }
@@ -28,11 +28,11 @@ pipeline {
             steps {
                 echo 'Pushing images...'
                 sh '''
-                    docker push cr.yandex/crpagqn6vd2vbjstpe7f/nginxssl:1.${BUILD_ID}
-                    docker push cr.yandex/crpagqn6vd2vbjstpe7f/nginxssl:latest
+                    docker push cr.yandex/crpagqn6vd2vbjstpe7f/nginxssl:1.${BUILD_ID}.dev
+                    docker push cr.yandex/crpagqn6vd2vbjstpe7f/nginxssl:dev
                     
-                    docker push cr.yandex/crpagqn6vd2vbjstpe7f/apache:1.${BUILD_ID}
-                    docker push cr.yandex/crpagqn6vd2vbjstpe7f/apache:latest
+                    docker push cr.yandex/crpagqn6vd2vbjstpe7f/apache:1.${BUILD_ID}.dev
+                    docker push cr.yandex/crpagqn6vd2vbjstpe7f/apache:dev
                 '''
             }
         }
@@ -53,7 +53,7 @@ pipeline {
                         sshCommand(remote: remoteTest, command: 'sudo docker rmi -f $(sudo docker images -af reference="cr.yandex/crpagqn6vd2vbjstpe7f/nginxssl" -q)')
                     }
                     // pull and run
-                    sshCommand(remote: remoteTest, command: 'docker pull cr.yandex/crpagqn6vd2vbjstpe7f/nginxssl:latest', sudo: true)
+                    sshCommand(remote: remoteTest, command: 'docker pull cr.yandex/crpagqn6vd2vbjstpe7f/nginxssl:dev', sudo: true)
                     sshCommand(remote: remoteTest, command: 'docker run -d --name nginx -p 443:443 -e PORT=443 -e DOLLAR=$ -e APACHE_URL=http://'+ remoteTest.host +':8080 cr.yandex/crpagqn6vd2vbjstpe7f/nginxssl', sudo: true)
                     //run apache container
                     catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
@@ -63,7 +63,7 @@ pipeline {
                         sshCommand(remote: remoteTest, command: 'sudo docker rmi -f $(sudo docker images -af reference="cr.yandex/crpagqn6vd2vbjstpe7f/apache" -q)')
                     }
                     // pull and run
-                    sshCommand(remote: remoteTest, command: 'docker pull cr.yandex/crpagqn6vd2vbjstpe7f/apache:latest', sudo: true)
+                    sshCommand(remote: remoteTest, command: 'docker pull cr.yandex/crpagqn6vd2vbjstpe7f/apache:dev', sudo: true)
                     sshCommand(remote: remoteTest, command: 'docker run -d --name apache -p 8080:8080 -e PORT=8080 -e DOLLAR=$ cr.yandex/crpagqn6vd2vbjstpe7f/apache', sudo: true)
 
                 }
