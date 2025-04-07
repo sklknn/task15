@@ -7,7 +7,7 @@ remoteTest.user = 'sklknn'
 */
 def remoteProd=[:]
 remoteProd.name = 'production'
-remoteProd.host = '158.160.80.155'
+remoteProd.host = '158.160.29.182'
 remoteProd.allowAnyHosts = true
 remoteProd.user = 'sklknn'
 
